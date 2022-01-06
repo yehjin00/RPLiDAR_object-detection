@@ -72,6 +72,8 @@ public:
   visualization_msgs::Marker getBoxModelKFVisualisationMessage();
   visualization_msgs::Marker getLShapeVisualisationMessage();
   visualization_msgs::Marker getBoxSolidVisualisationMessage();
+  visualization_msgs::Marker getBOXCenterVisualisationMessage();
+  visualization_msgs::Marker getBoxScaleVisualisationMessage();
 
   void update(const pointList&, const double dt, const tf::Transform& ego_pose);
 

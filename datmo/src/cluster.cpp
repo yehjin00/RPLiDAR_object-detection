@@ -120,7 +120,6 @@ void Cluster::populateTrackingMsgs(const double& dt){
 
 }
 
-//////////////////////////here
 void Cluster::rectangleFitting(const pointList& new_cluster){
   //This function is based on ¨Efficient L-Shape Fitting for
   //Vehicle Detection Using Laser Scanners¨
@@ -322,12 +321,12 @@ visualization_msgs::Marker Cluster::getLShapeVisualisationMessage() {
   l1l2_msg.color.b = 0;
   l1l2_msg.color.a = 1.0;
   
-  double theta_degrees = thetaL1 * (180.0/3.141592653589793238463);
-  if (theta_degrees > 360){
-    l1l2_msg.color.r = 1.0;
-    l1l2_msg.color.g = 0;
-    l1l2_msg.color.b = 0;
-  }
+  //double theta_degrees = thetaL1 * (180.0/3.141592653589793238463);
+  //if (theta_degrees > 360){
+  //  l1l2_msg.color.r = 1.0;
+  //  l1l2_msg.color.g = 0;
+  //  l1l2_msg.color.b = 0;
+  //}
 
   geometry_msgs::Point p;
   for (unsigned int i = 0; i < 3; ++i) {
@@ -534,6 +533,36 @@ visualization_msgs::Marker Cluster::getArrowVisualisationMessage() {
 
   return corner_msg;
 }
+
+visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
+
+  visualization_msgs::Marker scale_msg;
+  scale_msg.header.frame_id = frame_name;
+  scale_msg.header.stamp = ros::Time::now();
+  scale_msg.id = this->id;
+  scale_msg.ns = "box_scale";
+  scale_msg.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+  scale_msg.action = visualization_msgs::Marker::ADD;
+  scale_msg.scale.z = 0.1;
+  scale_msg.color.a = 1.0; // Don't forget to set the alpha!
+  scale_msg.color.r = 0.0;
+  scale_msg.color.g = 1.0;
+  scale_msg.color.b = 0.0;
+  scale_msg.pose.position.x = closest_corner_point.first - 0.15;
+  scale_msg.pose.position.y = closest_corner_point.second;
+  
+  geometry_msgs::Point p;
+  p.x = scale_msg.pose.position.x;
+  p.y = scale_msg.pose.position.y;
+    
+  std::string scale_string = "L1(width): " + std::to_string(L1_box) + "\nL2(length): " + std::to_string(L2_box);
+  
+  scale_msg.points.push_back(p);
+  scale_msg.text = scale_string;
+
+  return scale_msg;
+}
+
  visualization_msgs::Marker Cluster::getBoundingBoxCenterVisualisationMessage() {
 
     visualization_msgs::Marker boxcenter_marker;
@@ -558,6 +587,36 @@ visualization_msgs::Marker Cluster::getArrowVisualisationMessage() {
 
   return boxcenter_marker;
 }
+
+visualization_msgs::Marker Cluster::getBOXCenterVisualisationMessage() {
+
+  visualization_msgs::Marker text_msg;
+  text_msg.header.frame_id = frame_name;
+  text_msg.header.stamp = ros::Time::now();
+  text_msg.id = this->id;
+  text_msg.ns = "center_position";
+  text_msg.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
+  text_msg.action = visualization_msgs::Marker::ADD;
+  text_msg.scale.z = 0.1;
+  text_msg.color.a = 1.0; // Don't forget to set the alpha!
+  text_msg.color.r = 0.0;
+  text_msg.color.g = 1.0;
+  text_msg.color.b = 0.0;
+  text_msg.pose.position.x = cx + 0.15;
+  text_msg.pose.position.y = cy;
+  
+  geometry_msgs::Point p;
+  p.x = cx;
+  p.y = cy;
+    
+  std::string text_string = "x: " + std::to_string(p.x) + "\ny: " + std::to_string(p.y);
+  
+  text_msg.points.push_back(p);
+  text_msg.text = text_string;
+
+  return text_msg;
+}
+
 visualization_msgs::Marker Cluster::getClusterVisualisationMessage() {
 
   visualization_msgs::Marker cluster_vmsg;

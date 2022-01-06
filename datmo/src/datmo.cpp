@@ -183,6 +183,8 @@ void Datmo::callback(const sensor_msgs::LaserScan::ConstPtr& scan_in){
         marker_array.markers.push_back(clusters[i].getLShapeVisualisationMessage());
         marker_array.markers.push_back(clusters[i].getLineVisualisationMessage());
         marker_array.markers.push_back(clusters[i].getBoxSolidVisualisationMessage());
+        marker_array.markers.push_back(clusters[i].getBOXCenterVisualisationMessage());
+        marker_array.markers.push_back(clusters[i].getBoxScaleVisualisationMessage());
       }; 
     }
 
