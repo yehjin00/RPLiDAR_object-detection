@@ -272,7 +272,8 @@ visualization_msgs::Marker Cluster::getBoxModelKFVisualisationMessage() {
   bb_msg.color.b = b;
   bb_msg.color.r = r;
   bb_msg.color.a = a;
-
+  
+  if ((L1_box>0.3 & L1_box<0.45) | (L2_box>0.48 & L2_box<0.55)){
   geometry_msgs::Point p;
   double x = L1_box/2;
   double y = L2_box/2;
@@ -301,7 +302,7 @@ visualization_msgs::Marker Cluster::getBoxModelKFVisualisationMessage() {
   bb_msg.points.push_back(p);
   
   return bb_msg;
-  
+  }
 }
 
 visualization_msgs::Marker Cluster::getLShapeVisualisationMessage() {
