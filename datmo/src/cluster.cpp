@@ -256,10 +256,12 @@ visualization_msgs::Marker Cluster::getBoundingBoxVisualisationMessage() {
 
   return bb_msg;
 }
+
+
 visualization_msgs::Marker Cluster::getBoxModelKFVisualisationMessage() {
   
   visualization_msgs::Marker bb_msg;
-
+  
   bb_msg.header.stamp = ros::Time::now();
   bb_msg.header.frame_id  = frame_name;
   bb_msg.ns = "box_models_kf";
@@ -272,8 +274,8 @@ visualization_msgs::Marker Cluster::getBoxModelKFVisualisationMessage() {
   bb_msg.color.b = b;
   bb_msg.color.r = r;
   bb_msg.color.a = a;
-  
-  if ((L1_box>0.3 & L1_box<0.45) | (L2_box>0.48 & L2_box<0.55)){
+
+  if ((L1_box>0.3 && L1_box<0.45) && (L2_box>0.45 && L2_box<0.55)){
   geometry_msgs::Point p;
   double x = L1_box/2;
   double y = L2_box/2;
@@ -299,11 +301,12 @@ visualization_msgs::Marker Cluster::getBoxModelKFVisualisationMessage() {
   y = + L2_box/2;
   p.x = cx + x*cos(th) - y*sin(th);
   p.y = cy + x*sin(th) + y*cos(th);
-  bb_msg.points.push_back(p);
+  bb_msg.points.push_back(p);}
   
   return bb_msg;
-  }
+  
 }
+
 
 visualization_msgs::Marker Cluster::getLShapeVisualisationMessage() {
 
@@ -537,6 +540,7 @@ visualization_msgs::Marker Cluster::getArrowVisualisationMessage() {
 
 visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
 
+  
   visualization_msgs::Marker scale_msg;
   scale_msg.header.frame_id = frame_name;
   scale_msg.header.stamp = ros::Time::now();
@@ -556,16 +560,18 @@ visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
   p.x = scale_msg.pose.position.x;
   p.y = scale_msg.pose.position.y;
     
+  if ((L1_box>0.3 && L1_box<0.45) && (L2_box>0.45 && L2_box<0.55)){
   std::string scale_string = "L1(width): " + std::to_string(L1_box) + "\nL2(length): " + std::to_string(L2_box);
   
   scale_msg.points.push_back(p);
-  scale_msg.text = scale_string;
+  scale_msg.text = scale_string;}
 
   return scale_msg;
 }
 
- visualization_msgs::Marker Cluster::getBoundingBoxCenterVisualisationMessage() {
-
+visualization_msgs::Marker Cluster::getBoundingBoxCenterVisualisationMessage() {
+    
+    
     visualization_msgs::Marker boxcenter_marker;
     boxcenter_marker.type = visualization_msgs::Marker::POINTS;
     boxcenter_marker.header.frame_id = frame_name;
@@ -581,10 +587,11 @@ visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
     boxcenter_marker.color.b = 0;
     boxcenter_marker.id = this->id;
     
+    if ((L1_box>0.3 && L1_box<0.45) && (L2_box>0.45 && L2_box<0.55)){
     geometry_msgs::Point p;
     p.x = cx;
     p.y = cy;
-    boxcenter_marker.points.push_back(p);
+    boxcenter_marker.points.push_back(p);}
 
   return boxcenter_marker;
 }
@@ -610,10 +617,11 @@ visualization_msgs::Marker Cluster::getBOXCenterVisualisationMessage() {
   p.x = cx;
   p.y = cy;
     
+  if ((L1_box>0.3 && L1_box<0.45) && (L2_box>0.45 && L2_box<0.55)){
   std::string text_string = "x: " + std::to_string(p.x) + "\ny: " + std::to_string(p.y);
   
   text_msg.points.push_back(p);
-  text_msg.text = text_string;
+  text_msg.text = text_string;}
 
   return text_msg;
 }
