@@ -77,6 +77,10 @@ Cluster::Cluster(unsigned long int id, const pointList& new_points, const double
   LshapeTracker l_shape_tracker_ukf(closest_corner_point.first, closest_corner_point.second, L1, L2, normalize_angle(thetaL1), dt);
   this->Lshape = l_shape_tracker_ukf;
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
+
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
+    Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
+  }
   
   populateTrackingMsgs(dt);
 }
@@ -96,6 +100,10 @@ void Cluster::update(const pointList& new_points, const double dt, const tf::Tra
     Lshape.update(thetaL1, closest_corner_point.first, closest_corner_point.second, L1, L2, dt, new_points.size());
 
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
+
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
+    Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
+  }
 
   populateTrackingMsgs(dt);
 
@@ -118,6 +126,16 @@ void Cluster::populateTrackingMsgs(const double& dt){
   msg_track_box_kf.odom.pose.pose.orientation = tf2::toMsg(quaternion);
   msg_track_box_kf.odom.twist.twist.angular.z   = comega;
 
+}
+
+void Cluster::PublishMap2RobotTF_(){
+  tf::Transform map2robot;
+  map2robot.setOrigin(tf::Vector3(cx, cy, 0.0));
+  quaternion.setRPY(0, 0, psi);
+  map2robot.setRotation(quaternion);
+  ros::Time transform_expiration = ros::Time::now() + transform_tolerance_;
+  
+  br_.sendTransform(tf::StampedTransform(map2robot, transform_expiration, "map", "robot_pose");
 }
 
 void Cluster::rectangleFitting(const pointList& new_cluster){
@@ -275,7 +293,9 @@ visualization_msgs::Marker Cluster::getBoxModelKFVisualisationMessage() {
   bb_msg.color.r = r;
   bb_msg.color.a = a;
 
-  if ((L1_box>0.3 && L1_box<0.45) && (L2_box>0.45 && L2_box<0.55)){
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
+  //L1_box=0.495;
+  //L2_box=0.48;
   geometry_msgs::Point p;
   double x = L1_box/2;
   double y = L2_box/2;
@@ -560,7 +580,9 @@ visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
   p.x = scale_msg.pose.position.x;
   p.y = scale_msg.pose.position.y;
     
-  if ((L1_box>0.3 && L1_box<0.45) && (L2_box>0.45 && L2_box<0.55)){
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
+  //L1_box=0.495;
+  //L2_box=0.48;
   std::string scale_string = "L1(width): " + std::to_string(L1_box) + "\nL2(length): " + std::to_string(L2_box);
   
   scale_msg.points.push_back(p);
@@ -587,7 +609,7 @@ visualization_msgs::Marker Cluster::getBoundingBoxCenterVisualisationMessage() {
     boxcenter_marker.color.b = 0;
     boxcenter_marker.id = this->id;
     
-    if ((L1_box>0.3 && L1_box<0.45) && (L2_box>0.45 && L2_box<0.55)){
+    if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
     geometry_msgs::Point p;
     p.x = cx;
     p.y = cy;
@@ -617,7 +639,7 @@ visualization_msgs::Marker Cluster::getBOXCenterVisualisationMessage() {
   p.x = cx;
   p.y = cy;
     
-  if ((L1_box>0.3 && L1_box<0.45) && (L2_box>0.45 && L2_box<0.55)){
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
   std::string text_string = "x: " + std::to_string(p.x) + "\ny: " + std::to_string(p.y);
   
   text_msg.points.push_back(p);
