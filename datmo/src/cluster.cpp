@@ -78,7 +78,7 @@ Cluster::Cluster(unsigned long int id, const pointList& new_points, const double
   this->Lshape = l_shape_tracker_ukf;
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
 
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
     Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
   }
   
@@ -101,7 +101,7 @@ void Cluster::update(const pointList& new_points, const double dt, const tf::Tra
 
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
 
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
     Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
   }
 
@@ -293,9 +293,7 @@ visualization_msgs::Marker Cluster::getBoxModelKFVisualisationMessage() {
   bb_msg.color.r = r;
   bb_msg.color.a = a;
 
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
-  //L1_box=0.495;
-  //L2_box=0.48;
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
   geometry_msgs::Point p;
   double x = L1_box/2;
   double y = L2_box/2;
@@ -580,9 +578,7 @@ visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
   p.x = scale_msg.pose.position.x;
   p.y = scale_msg.pose.position.y;
     
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
-  //L1_box=0.495;
-  //L2_box=0.48;
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
   std::string scale_string = "L1(width): " + std::to_string(L1_box) + "\nL2(length): " + std::to_string(L2_box);
   
   scale_msg.points.push_back(p);
@@ -609,7 +605,7 @@ visualization_msgs::Marker Cluster::getBoundingBoxCenterVisualisationMessage() {
     boxcenter_marker.color.b = 0;
     boxcenter_marker.id = this->id;
     
-    if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
+    if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
     geometry_msgs::Point p;
     p.x = cx;
     p.y = cy;
