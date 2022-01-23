@@ -2,7 +2,13 @@
     <include file="$(find rplidar_ros)/launch/rplidar_s1.launch" />
 
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rplidar_ros)/rviz/rplidar.rviz" />
+  <node name="tf_11" pkg="datmo" type="tf_11" output="screen" />
   
+  <arg name="map_file" default="$(find datmo)/images/220123_3rd.yaml"/>
+
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+
  <node pkg="datmo" type="datmo" name="datmo" output="screen">
   <param name="lidar_frame" value="datmo_lidar" />
   <param name="world_frame" value="map" />
@@ -10,5 +16,7 @@
   <param name="euclidean_distance" value="0.25" />
   <param name="pub_markers" value="true" />
  </node>
+
+  
     
 </launch>

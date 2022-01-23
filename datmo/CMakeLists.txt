@@ -42,7 +42,7 @@ generate_messages(
 )
 
 catkin_package(
- CATKIN_DEPENDS roscpp std_msgs message_runtime
+ CATKIN_DEPENDS roscpp std_msgs message_runtime tf
 )
 
 
@@ -54,3 +54,6 @@ include_directories(
 add_executable(datmo src/main.cpp src/l_shape_tracker.cpp src/kalman-cpp/kalman.cpp src/datmo.cpp src/cluster.cpp)
 add_dependencies(datmo ${catkin_EXPORTED_TARGETS} datmo_generate_messages_cpp)
 target_link_libraries(datmo ${catkin_LIBRARIES})
+add_executable(tf_11 src/tf_11.cpp)
+add_dependencies(tf_11 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(tf_11 ${catkin_LIBRARIES})
