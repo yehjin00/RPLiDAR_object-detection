@@ -128,15 +128,15 @@ void Cluster::populateTrackingMsgs(const double& dt){
 
 }
 
-void Cluster::PublishMap2RobotTF_(){
-  tf::Transform map2robot;
-  map2robot.setOrigin(tf::Vector3(cx, cy, 0.0));
-  quaternion.setRPY(0, 0, psi);
-  map2robot.setRotation(quaternion);
-  ros::Time transform_expiration = ros::Time::now() + transform_tolerance_;
+// void Cluster::PublishMap2RobotTF_(){
+//   tf::Transform map2robot;
+//   map2robot.setOrigin(tf::Vector3(cx, cy, 0.0));
+//   quaternion.setRPY(0, 0, psi);
+//   map2robot.setRotation(quaternion);
+//   ros::Time transform_expiration = ros::Time::now() + transform_tolerance_;
   
-  br_.sendTransform(tf::StampedTransform(map2robot, transform_expiration, "map", "robot_pose");
-}
+//   br_.sendTransform(tf::StampedTransform(map2robot, transform_expiration, "map", "robot_pose");
+// }
 
 void Cluster::rectangleFitting(const pointList& new_cluster){
   //This function is based on ¨Efficient L-Shape Fitting for

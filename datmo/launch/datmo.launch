@@ -4,8 +4,8 @@
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rplidar_ros)/rviz/rplidar.rviz" />
   
  <node pkg="datmo" type="datmo" name="datmo" output="screen">
-  <param name="lidar_frame" value="laser" />
-  <param name="world_frame" value="laser" />
+  <param name="lidar_frame" value="datmo_lidar" />
+  <param name="world_frame" value="datmo_lidar" />
   <param name="threshold_distance" value="0.2" />
   <param name="euclidean_distance" value="0.25" />
   <param name="pub_markers" value="true" />

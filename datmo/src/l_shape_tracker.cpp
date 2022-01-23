@@ -277,6 +277,26 @@ void LshapeTracker::detectCornerPointSwitchMahalanobis(const double& from, const
   findOrientation(psi, length, width);
 }
 
+void LshapeTracker::Robot_BoxModel(double& x, double& y,double& vx, double& vy,double& theta, double& psi, double& omega, double& L1, double& L2, double& length, double& width){
+  L1 = 0.495;
+  L2 = 0.48;
+  theta = shape_kf.state()(2);
+  //Equations 30 of "L-Shape Model Switching-Based precise motion tracking of moving vehicles"
+  double ex = (L1 * cos(theta) + L2 * sin(theta)) /2;
+  double ey = (L1 * sin(theta) - L2 * cos(theta)) /2;
+
+  omega = shape_kf.state()(3);
+  x = dynamic_kf.state()(0) + ex;
+  y = dynamic_kf.state()(1) + ey;
+
+  //Equations 31 of "L-Shape Model Switching-Based precise motion tracking of moving vehicles"
+  //TODO test the complete equation also
+  vx = dynamic_kf.state()(2);
+  vy = dynamic_kf.state()(3);
+
+  findOrientation(psi, length, width);
+}
+
 
 double LshapeTracker::findTurn(const double& new_angle, const double& old_angle){
   //https://math.stackexchange.com/questions/1366869/calculating-rotation-direction-between-two-angles
