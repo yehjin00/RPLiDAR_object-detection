@@ -78,7 +78,7 @@ Cluster::Cluster(unsigned long int id, const pointList& new_points, const double
   this->Lshape = l_shape_tracker_ukf;
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
 
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
+  if (robot_predict){
     Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
   }
   
@@ -101,7 +101,7 @@ void Cluster::update(const pointList& new_points, const double dt, const tf::Tra
 
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
 
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
+  if (robot_predict){
     Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
   }
 
@@ -293,7 +293,7 @@ visualization_msgs::Marker Cluster::getBoxModelKFVisualisationMessage() {
   bb_msg.color.r = r;
   bb_msg.color.a = a;
 
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
+  if (robot_predict){
   geometry_msgs::Point p;
   double x = L1_box/2;
   double y = L2_box/2;
@@ -418,7 +418,7 @@ double Cluster::closenessCriterion(const VectorXd& C1, const VectorXd& C2, const
   return b; 
 }
 visualization_msgs::Marker Cluster::getThetaBoxVisualisationMessage() {
-
+  if (robot_predict){
   visualization_msgs::Marker arrow_marker;
   arrow_marker.type            = visualization_msgs::Marker::ARROW;
   arrow_marker.header.stamp    = ros::Time::now();
@@ -442,7 +442,7 @@ visualization_msgs::Marker Cluster::getThetaBoxVisualisationMessage() {
   quaternion.setRPY(0,0,psi);
   arrow_marker.pose.orientation = tf2::toMsg(quaternion);
  
-  return arrow_marker;
+    return arrow_marker;}
 }
 visualization_msgs::Marker Cluster::getThetaL1VisualisationMessage() {
 
@@ -522,8 +522,8 @@ visualization_msgs::Marker Cluster::getArrowVisualisationMessage() {
   arrow_marker.points.push_back(p);
   //ROS_INFO("cx : %f",cx);
 
-  p.x = 0;//cx + cvx *1; // direction 
-  p.y = 0;//cy + cvy *1; 
+  p.x = cx + cvx *1; // direction 
+  p.y = cy + cvy *1; 
   p.z = 0;
   arrow_marker.points.push_back(p);
   return arrow_marker;
@@ -578,7 +578,7 @@ visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
   p.x = scale_msg.pose.position.x;
   p.y = scale_msg.pose.position.y;
     
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
+  if (robot_predict){
   std::string scale_string = "L1(width): " + std::to_string(L1_box) + "\nL2(length): " + std::to_string(L2_box);
   
   scale_msg.points.push_back(p);
@@ -605,7 +605,7 @@ visualization_msgs::Marker Cluster::getBoundingBoxCenterVisualisationMessage() {
     boxcenter_marker.color.b = 0;
     boxcenter_marker.id = this->id;
     
-    if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5)){
+    if (robot_predict){
     geometry_msgs::Point p;
     p.x = cx;
     p.y = cy;
@@ -635,7 +635,7 @@ visualization_msgs::Marker Cluster::getBOXCenterVisualisationMessage() {
   p.x = cx;
   p.y = cy;
     
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)){
+  if (robot_predict){
   std::string text_string = "x: " + std::to_string(p.x) + "\ny: " + std::to_string(p.y);
   
   text_msg.points.push_back(p);
@@ -834,4 +834,21 @@ void Cluster::ramerDouglasPeucker(const std::vector<Point> &pointList, double ep
     out.push_back(pointList[0]);
     out.push_back(pointList[end]);
   }
+}
+
+geometry_msgs::Pose Cluster::getCenterPose() {
+  geometry_msgs::Pose p,notp;
+  p.position.x = cx;
+  p.position.y = cy;
+  p.position.z = 0.0;
+  p.orientation.x = p.orientation.y = 0.0;
+  p.orientation.z = 0.708229;
+  p.orientation.w = 0.705983;
+  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)) {
+    std::cout << "cx, cy: " << cx << ", " << cy << std::endl;
+    return p;
+  }
+  notp.position.x = notp.position.y = notp.position.z = notp.orientation.x = notp.orientation.y = notp.orientation.z = 0.0;
+  notp.orientation.w = 1.0;
+  return notp;
 }

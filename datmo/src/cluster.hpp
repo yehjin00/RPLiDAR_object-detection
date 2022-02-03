@@ -39,6 +39,11 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <vector>
+#include <iostream>
+
+#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Vector3.h>
+#include <geometry_msgs/Quaternion.h>
 
 using namespace Eigen;
 
@@ -75,6 +80,8 @@ public:
   visualization_msgs::Marker getBOXCenterVisualisationMessage();
   visualization_msgs::Marker getBoxScaleVisualisationMessage();
 
+  geometry_msgs::Pose getCenterPose();
+
   void update(const pointList&, const double dt, const tf::Transform& ego_pose);
 
   std::pair<double, double> mean() { return mean_values; }; //Return mean of cluster.
@@ -87,6 +94,7 @@ public:
   double L1, L2, thetaL1, thetaL2;
   double cx, cy, cvx, cvy, L1_box, L2_box, th, psi, comega, length_box, width_box; 
   double x_ukf,  y_ukf, vx_ukf,  vy_ukf, omega_ukf;
+  bool robot_predict=(L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5);
 
 private:
 

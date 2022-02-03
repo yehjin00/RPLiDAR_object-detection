@@ -37,7 +37,7 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "datmo_node");
 
   //Create an object of class datmo 
-  Datmo  datmo_object;
+  Datmo datmo_object;
 
   ros::spin();
 

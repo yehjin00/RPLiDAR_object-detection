@@ -1,10 +1,13 @@
  <launch>
-    <include file="$(find rplidar_ros)/launch/rplidar_s1.launch" />
+  <arg name="map_file" default="$(find datmo)/images/220123_3rd.yaml"/>
+  <arg name="place" default="lab"/>
+
+  <include file="$(find rplidar_ros)/launch/rplidar_s1.launch" />
 
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rplidar_ros)/rviz/rplidar.rviz" />
-  <node name="tf_11" pkg="datmo" type="tf_11" output="screen" />
-  
-  <arg name="map_file" default="$(find datmo)/images/220123_3rd.yaml"/>
+  <node name="tf_11" pkg="datmo" type="tf_11" output="screen">
+    <param name="place" value="$(arg place)"/>
+  </node>
 
   <!-- Run the map server -->
   <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />

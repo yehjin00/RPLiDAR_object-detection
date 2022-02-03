@@ -46,6 +46,7 @@ Datmo::Datmo(){
 
   pub_tracks_box_kf     = n.advertise<datmo::TrackArray>("datmo/box_kf", 10);
   pub_marker_array   = n.advertise<visualization_msgs::MarkerArray>("datmo/marker_array", 10);
+  pub_centerpose   = n.advertise<geometry_msgs::PoseArray>("datmo/center_array", 10);
   sub_scan = n.subscribe("/scan", 1, &Datmo::callback, this);
 
 }
@@ -165,6 +166,8 @@ void Datmo::callback(const sensor_msgs::LaserScan::ConstPtr& scan_in){
     
     //Visualizations and msg publications
     visualization_msgs::MarkerArray marker_array;
+    geometry_msgs::PoseArray center_array;
+    bool center_pub = true;
     datmo::TrackArray track_array_box_kf; 
     for (unsigned int i =0; i<clusters.size();i++){
 
@@ -185,11 +188,17 @@ void Datmo::callback(const sensor_msgs::LaserScan::ConstPtr& scan_in){
         marker_array.markers.push_back(clusters[i].getBoxSolidVisualisationMessage());
         marker_array.markers.push_back(clusters[i].getBOXCenterVisualisationMessage());
         marker_array.markers.push_back(clusters[i].getBoxScaleVisualisationMessage());
-      }; 
+      };
+      if (center_pub) {
+        center_array.header.frame_id = "map";
+        center_array.header.stamp = ros::Time::now();
+        center_array.poses.push_back(clusters[i].getCenterPose());
+      }
     }
 
     pub_marker_array.publish(marker_array);
     pub_tracks_box_kf.publish(track_array_box_kf);
+    pub_centerpose.publish(center_array);
     visualiseGroupedPoints(point_clusters);
     
   }

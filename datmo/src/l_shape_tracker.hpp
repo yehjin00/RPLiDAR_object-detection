@@ -76,4 +76,5 @@ private:
    * \orientation orientation of tracked object, based on it's speed
    */
   void findOrientation(double& psi, double& length, double& width);
+  void Robot_findOrientation(double& psi, double& length, double& width);
 };

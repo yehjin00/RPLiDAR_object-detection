@@ -294,7 +294,7 @@ void LshapeTracker::Robot_BoxModel(double& x, double& y,double& vx, double& vy,d
   vx = dynamic_kf.state()(2);
   vy = dynamic_kf.state()(3);
 
-  findOrientation(psi, length, width);
+  Robot_findOrientation(psi, length, width);
 }
 
 
@@ -336,6 +336,7 @@ void LshapeTracker::findOrientation(double& psi, double& length, double& width){
   double min = 1.56;
   double distance;
   double orientation;
+  //bool robot_predict=(shape_kf.state()(0)>0.42 && shape_kf.state()(0)<0.5) || (shape_kf.state()(1)>0.42 && shape_kf.state()(1)<0.5);
   int    pos;
   for (unsigned int i = 0; i < 4; ++i) {
     distance = abs(shortest_angular_distance(vsp,angles[i]));
@@ -345,6 +346,7 @@ void LshapeTracker::findOrientation(double& psi, double& length, double& width){
       pos = i;
     }
   } 
+
   if(pos ==0 || pos==1){
     length = shape_kf.state()(0);
     width  = shape_kf.state()(1);
@@ -352,6 +354,44 @@ void LshapeTracker::findOrientation(double& psi, double& length, double& width){
   else{
     length = shape_kf.state()(1);
     width  = shape_kf.state()(0);
+  }
+
+  psi = normalize_angle(orientation);
+  
+}
+
+void LshapeTracker::Robot_findOrientation(double& psi, double& length, double& width){
+  //This function finds the orientation of a moving object, when given an L-shape orientation
+
+  std::vector<double> angles;
+  double angle_norm = normalize_angle(shape_kf.state()(2));
+  angles.push_back(angle_norm);
+  angles.push_back(angle_norm + pi);
+  angles.push_back(angle_norm + pi/2);
+  angles.push_back(angle_norm + 3*pi/2);
+
+  double vsp = atan2(dynamic_kf.state()(3),dynamic_kf.state()(2));
+  double min = 1.56;
+  double distance;
+  double orientation;
+  //bool robot_predict=(shape_kf.state()(0)>0.42 && shape_kf.state()(0)<0.5) || (shape_kf.state()(1)>0.42 && shape_kf.state()(1)<0.5);
+  int    pos;
+  for (unsigned int i = 0; i < 4; ++i) {
+    distance = abs(shortest_angular_distance(vsp,angles[i]));
+    if (distance < min){ 
+      min = distance;
+      orientation = normalize_angle(angles[i]);
+      pos = i;
+    }
+  } 
+
+  if(pos ==0 || pos==1){
+    length = 0.495; //shape_kf.state()(0);
+    width  = 0.48;  //shape_kf.state()(1);
+  }
+  else{
+    length = 0.48;  //shape_kf.state()(1);
+    width  = 0.495; //shape_kf.state()(0);
   }
 
   psi = normalize_angle(orientation);
