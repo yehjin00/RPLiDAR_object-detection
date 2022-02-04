@@ -77,7 +77,8 @@ Cluster::Cluster(unsigned long int id, const pointList& new_points, const double
   LshapeTracker l_shape_tracker_ukf(closest_corner_point.first, closest_corner_point.second, L1, L2, normalize_angle(thetaL1), dt);
   this->Lshape = l_shape_tracker_ukf;
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
-
+  
+  robot_predict=(L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5);
   if (robot_predict){
     Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
   }
@@ -418,7 +419,7 @@ double Cluster::closenessCriterion(const VectorXd& C1, const VectorXd& C2, const
   return b; 
 }
 visualization_msgs::Marker Cluster::getThetaBoxVisualisationMessage() {
-  if (robot_predict){
+  
   visualization_msgs::Marker arrow_marker;
   arrow_marker.type            = visualization_msgs::Marker::ARROW;
   arrow_marker.header.stamp    = ros::Time::now();
@@ -432,6 +433,8 @@ visualization_msgs::Marker Cluster::getThetaBoxVisualisationMessage() {
   arrow_marker.pose.position.x = cx;
   arrow_marker.pose.position.y = cy;
   arrow_marker.pose.position.z = 0;
+
+  if (robot_predict){
   arrow_marker.scale.x         = length_box;
   arrow_marker.scale.y         = width_box;
   arrow_marker.scale.z         = 0.01;
@@ -579,7 +582,7 @@ visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
   p.y = scale_msg.pose.position.y;
     
   if (robot_predict){
-  std::string scale_string = "L1(width): " + std::to_string(L1_box) + "\nL2(length): " + std::to_string(L2_box);
+  std::string scale_string = "L1:" + std::to_string(L1_box).substr(0, 4) + "\nL2:" + std::to_string(L2_box).substr(0, 4);
   
   scale_msg.points.push_back(p);
   scale_msg.text = scale_string;}
@@ -636,7 +639,7 @@ visualization_msgs::Marker Cluster::getBOXCenterVisualisationMessage() {
   p.y = cy;
     
   if (robot_predict){
-  std::string text_string = "x: " + std::to_string(p.x) + "\ny: " + std::to_string(p.y);
+  std::string text_string = "x:" + std::to_string(p.x).substr(0, 4) + "\ny:" + std::to_string(p.y).substr(0, 4);
   
   text_msg.points.push_back(p);
   text_msg.text = text_string;}
@@ -692,10 +695,11 @@ visualization_msgs::Marker Cluster::getBoxSolidVisualisationMessage() {
 
   quaternion.setRPY(0, 0, psi);
   marker.pose.orientation = tf2::toMsg(quaternion);
-
+  
+  if(robot_predict){
   marker.scale.x = length_box;
   marker.scale.y = width_box;
-  marker.scale.z = 0.01;
+  marker.scale.z = 0.01;}
 
   marker.color.r = this->r;
   marker.color.g = this->g;
