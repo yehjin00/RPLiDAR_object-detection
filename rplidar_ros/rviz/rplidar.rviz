@@ -28,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: RPLidarLaserScan
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -118,7 +118,7 @@ Visualization Manager:
       Axes Radius: 0.009999999776482582
       Class: rviz/PoseArray
       Color: 255; 25; 0
-      Enabled: false
+      Enabled: true
       Head Length: 0.07000000029802322
       Head Radius: 0.029999999329447746
       Name: PoseArray
@@ -127,14 +127,14 @@ Visualization Manager:
       Shape: Arrow (Flat)
       Topic: /datmo/center_array
       Unreliable: false
-      Value: false
+      Value: true
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: /datmo/marker_array
       Name: MarkerArray
       Namespaces:
         L-Shapes: false
-        bounding_box_center: true
+        bounding_box_center: false
         bounding_boxes: false
         box_models_kf: true
         box_scale: true
@@ -154,7 +154,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: datmo_lidar
     Frame Rate: 30
   Name: root
   Tools:
@@ -172,7 +172,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: -0.05499899759888649
+      Angle: -1.5750001668930054
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -182,11 +182,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 235.38694763183594
+      Scale: 208.59213256835938
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: -0.9442934393882751
-      Y: 0.24409636855125427
+      X: -1.1198409795761108
+      Y: -0.08703281730413437
     Saved: ~
 Window Geometry:
   Displays:
