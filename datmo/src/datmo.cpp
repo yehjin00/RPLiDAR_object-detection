@@ -120,16 +120,16 @@ void Datmo::callback(const sensor_msgs::LaserScan::ConstPtr& scan_in){
       unsigned int position;
       double min_distance = euclidean_distance;
       for(unsigned int g=0; g<point_clusters.size();++g){
-    if(euclidean[g][c] < min_distance){
-      min_distance = euclidean[g][c];
-      position = g;
-    }
+        if(euclidean[g][c] < min_distance){
+          min_distance = euclidean[g][c];
+          position = g;
+          }
+        }
+        if(min_distance < euclidean_distance){
+          g_matched[position] = true, c_matched[c] = true;
+          pairs.push_back(pair<int,int>(c,position));
+          }
       }
-      if(min_distance < euclidean_distance){
-        g_matched[position] = true, c_matched[c] = true;
-        pairs.push_back(pair<int,int>(c,position));
-      }
-    }
 
     //Update Tracked Clusters
     #pragma omp parallel for

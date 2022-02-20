@@ -92,9 +92,10 @@ public:
 
   double old_thetaL1;
   double L1, L2, thetaL1, thetaL2;
-  double cx, cy, cvx, cvy, L1_box, L2_box, th, psi, comega, length_box, width_box; 
+  double cx, cy, cvx, cvy, L1_box, L2_box, th, psi, comega, length_box, width_box, cosd; 
   double x_ukf,  y_ukf, vx_ukf,  vy_ukf, omega_ukf;
-  bool robot_predict;
+  double robot;
+  
 
 private:
 
@@ -119,4 +120,5 @@ private:
   Point lineIntersection(double& , double& , double& , double& , double& , double& );
   double perpendicularDistance(const Point&, const Point&, const Point&);
   void ramerDouglasPeucker(const std::vector<Point>&, double, std::vector<Point>&);
+  bool robot_predict(double&, double& );
 };

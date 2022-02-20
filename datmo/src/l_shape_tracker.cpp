@@ -266,8 +266,11 @@ void LshapeTracker::detectCornerPointSwitchMahalanobis(const double& from, const
   double ey = (L1 * sin(theta) - L2 * cos(theta)) /2;
 
   omega = shape_kf.state()(3);
+
+
   x = dynamic_kf.state()(0) + ex;
   y = dynamic_kf.state()(1) + ey;
+  
 
   //Equations 31 of "L-Shape Model Switching-Based precise motion tracking of moving vehicles"
   //TODO test the complete equation also
@@ -277,7 +280,7 @@ void LshapeTracker::detectCornerPointSwitchMahalanobis(const double& from, const
   findOrientation(psi, length, width);
 }
 
-void LshapeTracker::Robot_BoxModel(double& x, double& y,double& vx, double& vy,double& theta, double& psi, double& omega, double& L1, double& L2, double& length, double& width){
+void LshapeTracker::Robot_BoxModel(double& x, double& y,double& vx, double& vy,double& theta, double& psi, double& omega, double& L1, double& L2, double& length, double& width, double& cosd){
   L1 = 0.495;
   L2 = 0.48;
   theta = shape_kf.state()(2);
@@ -286,6 +289,7 @@ void LshapeTracker::Robot_BoxModel(double& x, double& y,double& vx, double& vy,d
   double ey = (L1 * sin(theta) - L2 * cos(theta)) /2;
 
   omega = shape_kf.state()(3);
+
   x = dynamic_kf.state()(0) + ex;
   y = dynamic_kf.state()(1) + ey;
 
@@ -294,9 +298,24 @@ void LshapeTracker::Robot_BoxModel(double& x, double& y,double& vx, double& vy,d
   vx = dynamic_kf.state()(2);
   vy = dynamic_kf.state()(3);
 
+  if(old_x){
+    cosd = 1-(x*old_x+y*old_y)/(sqrt(pow(x,2)+pow(y,2))*sqrt(pow(old_x,2)+pow(old_y,2)))>0.0001;
+    value = 1-(x*old_x+y*old_y)/(sqrt(pow(x,2)+pow(y,2))*sqrt(pow(old_x,2)+pow(old_y,2)));
+    std::cout << "(" << x << ", " << y << ")" << "(" << old_x << ", " << old_y << ")" << "\n";
+    std::cout << "cosd vlaue : " << value << "\n";
+
+  }
+  
+  old_x,old_y=center_update(x,y);
+  
   Robot_findOrientation(psi, length, width);
 }
 
+double LshapeTracker::center_update(double& x, double& y){
+  old_x = x;
+  old_y = y;
+  return old_x,old_y;
+}
 
 double LshapeTracker::findTurn(const double& new_angle, const double& old_angle){
   //https://math.stackexchange.com/questions/1366869/calculating-rotation-direction-between-two-angles
@@ -336,7 +355,6 @@ void LshapeTracker::findOrientation(double& psi, double& length, double& width){
   double min = 1.56;
   double distance;
   double orientation;
-  //bool robot_predict=(shape_kf.state()(0)>0.42 && shape_kf.state()(0)<0.5) || (shape_kf.state()(1)>0.42 && shape_kf.state()(1)<0.5);
   int    pos;
   for (unsigned int i = 0; i < 4; ++i) {
     distance = abs(shortest_angular_distance(vsp,angles[i]));
@@ -374,13 +392,14 @@ void LshapeTracker::Robot_findOrientation(double& psi, double& length, double& w
   double min = 1.56;
   double distance;
   double orientation;
-  //bool robot_predict=(shape_kf.state()(0)>0.42 && shape_kf.state()(0)<0.5) || (shape_kf.state()(1)>0.42 && shape_kf.state()(1)<0.5);
   int    pos;
+
   for (unsigned int i = 0; i < 4; ++i) {
     distance = abs(shortest_angular_distance(vsp,angles[i]));
     if (distance < min){ 
       min = distance;
       orientation = normalize_angle(angles[i]);
+      //go=abs(normalize_angle(angles[i+1])-normalize_angle(angles[i])) < 1.6; // if it is small, it's mean the robot's direction is same with past.
       pos = i;
     }
   } 

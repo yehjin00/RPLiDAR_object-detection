@@ -34,6 +34,7 @@
 #include "kalman-cpp/kalman.hpp"
 #include <Eigen/Dense>
 #include <ros/console.h>
+#include<cmath>
 
 using namespace Eigen;
 
@@ -49,12 +50,15 @@ public:
   LshapeTracker();
   void update(const double& thetaL1, const double& x_corner, const double& y_corner, const double& L1, const double& L2, const double& dt, const int cluster_size);
   void BoxModel(double& x, double& y,double& vx, double& vy,double& theta, double& psi, double& omega, double& L1, double& L2, double& length, double& width);
-  void Robot_BoxModel(double& x, double& y,double& vx, double& vy,double& theta, double& psi, double& omega, double& L1, double& L2, double& length, double& width);
+  void Robot_BoxModel(double& x, double& y,double& vx, double& vy,double& theta, double& psi, double& omega, double& L1, double& L2, double& length, double& width, double& cosd);
+  double center_update(double& x, double& y);
 
 private:
   int current_size;
   double test1, test2, test3;
   double x_old, y_old, L1_old, L2_old, old_thetaL1;
+  double old_x, old_y, cosd, value;
+  
 
   KalmanFilter shape_kf;
   KalmanFilter dynamic_kf;

@@ -78,10 +78,11 @@ Cluster::Cluster(unsigned long int id, const pointList& new_points, const double
   this->Lshape = l_shape_tracker_ukf;
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
   
-  robot_predict=(L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.5);
-  if (robot_predict){
-    Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
+  robot=robot_predict(L1_box, L2_box);
+  if (robot){
+    Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box, cosd);
   }
+  //std::cout << "go??: " << cosd <<"\n";
   
   populateTrackingMsgs(dt);
 }
@@ -102,8 +103,8 @@ void Cluster::update(const pointList& new_points, const double dt, const tf::Tra
 
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
 
-  if (robot_predict){
-    Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
+  if (robot){
+    Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box, cosd);
   }
 
   populateTrackingMsgs(dt);
@@ -241,7 +242,7 @@ void Cluster::rectangleFitting(const pointList& new_cluster){
   dy = l1l2_list[1].second- l1l2_list[2].second;
   L2 = pow(pow(dx,2.0)+pow(dy,2.0),0.5);
 
-  thetaL1   = atan2((l1l2[0].second - l1l2[1].second),(l1l2[0].first - l1l2[1].first)); 
+  thetaL1 = atan2((l1l2[0].second - l1l2[1].second),(l1l2[0].first - l1l2[1].first)); 
 
   thetaL2 = atan2((l1l2[2].second - l1l2[1].second),(l1l2[2].first - l1l2[1].first)); 
   
@@ -294,7 +295,7 @@ visualization_msgs::Marker Cluster::getBoxModelKFVisualisationMessage() {
   bb_msg.color.r = r;
   bb_msg.color.a = a;
 
-  if (robot_predict){
+  if (robot){
   geometry_msgs::Point p;
   double x = L1_box/2;
   double y = L2_box/2;
@@ -434,7 +435,7 @@ visualization_msgs::Marker Cluster::getThetaBoxVisualisationMessage() {
   arrow_marker.pose.position.y = cy;
   arrow_marker.pose.position.z = 0;
 
-  if (robot_predict){
+  if (robot && cosd){
   arrow_marker.scale.x         = length_box;
   arrow_marker.scale.y         = width_box;
   arrow_marker.scale.z         = 0.01;
@@ -581,8 +582,8 @@ visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
   p.x = scale_msg.pose.position.x;
   p.y = scale_msg.pose.position.y;
     
-  if (robot_predict){
-  std::string scale_string = "L1:" + std::to_string(L1_box).substr(0, 4) + "\nL2:" + std::to_string(L2_box).substr(0, 4);
+  if (robot){
+  std::string scale_string = "L1:" + std::to_string(L1_box).substr(0, 4) + "\nL2:" + std::to_string(L2_box).substr(0, 4) + "\n" + std::to_string(cosd);
   
   scale_msg.points.push_back(p);
   scale_msg.text = scale_string;}
@@ -608,7 +609,7 @@ visualization_msgs::Marker Cluster::getBoundingBoxCenterVisualisationMessage() {
     boxcenter_marker.color.b = 0;
     boxcenter_marker.id = this->id;
     
-    if (robot_predict){
+    if (robot){
     geometry_msgs::Point p;
     p.x = cx;
     p.y = cy;
@@ -638,8 +639,8 @@ visualization_msgs::Marker Cluster::getBOXCenterVisualisationMessage() {
   p.x = cx;
   p.y = cy;
     
-  if (robot_predict){
-  std::string text_string = "x:" + std::to_string(p.x).substr(0, 4) + "\ny:" + std::to_string(p.y).substr(0, 4);
+  if (robot){
+  std::string text_string = "x:" + std::to_string(p.x) + "\ny:" + std::to_string(p.y);//.substr(0, 4);
   
   text_msg.points.push_back(p);
   text_msg.text = text_string;}
@@ -696,7 +697,7 @@ visualization_msgs::Marker Cluster::getBoxSolidVisualisationMessage() {
   quaternion.setRPY(0, 0, psi);
   marker.pose.orientation = tf2::toMsg(quaternion);
   
-  if(robot_predict){
+  if(robot){
   marker.scale.x = length_box;
   marker.scale.y = width_box;
   marker.scale.z = 0.01;}
@@ -840,6 +841,10 @@ void Cluster::ramerDouglasPeucker(const std::vector<Point> &pointList, double ep
   }
 }
 
+bool Cluster::robot_predict(double& length, double& width){
+  return (length>0.42 && length<0.5) || (width>0.42 && width<0.5);
+}
+
 geometry_msgs::Pose Cluster::getCenterPose() {
   geometry_msgs::Pose p,notp;
   p.position.x = cx;
@@ -848,8 +853,8 @@ geometry_msgs::Pose Cluster::getCenterPose() {
   p.orientation.x = p.orientation.y = 0.0;
   p.orientation.z = 0.708229;
   p.orientation.w = 0.705983;
-  if ((L1_box>0.42 && L1_box<0.5) || (L2_box>0.42 && L2_box<0.46)) {
-    std::cout << "cx, cy: " << cx << ", " << cy << std::endl;
+  if (robot) {
+    //std::cout << "cx, cy: " << cx << ", " << cy << std::endl;
     return p;
   }
   notp.position.x = notp.position.y = notp.position.z = notp.orientation.x = notp.orientation.y = notp.orientation.z = 0.0;

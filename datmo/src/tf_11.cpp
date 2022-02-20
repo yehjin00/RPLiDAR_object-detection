@@ -9,13 +9,13 @@ int main(int argc, char *argv[])
     ros::NodeHandle nh;
 
     std::string place;
-    nh.param("place", place, std::string("lab"));
+    nh.getParam("/tf_11/place", place);
 
     tf::TransformBroadcaster br_;
     ros::Duration transform_tolerance_;
     transform_tolerance_.fromSec(0.5);
-    double lab[4] = {-1.560919, 0.856247, 0.708229, 0.705983};
-    double ele[4] = {30.725906, 0.112852, 0.999833, 0.018264};
+    double lab[4] = {-2.566507, -2.798608, -0.935929, 0.352190};
+    double ele[4] = {2.960992, -1.661443, -0.358322, 0.933598};
     ros::Rate rate(20.0);
     while (nh.ok()) {
         tf::Transform map2markermap;
@@ -29,9 +29,9 @@ int main(int argc, char *argv[])
             tf::Quaternion q(0.000000, 0.000000, ele[2], ele[3]);
             map2markermap.setRotation(q);
         }
-        map2markermap.setOrigin(tf::Vector3(-1.560919, 0.856247, 0.0));
-        tf::Quaternion q(0.000000, 0.000000, 0.708229, 0.705983);
-        map2markermap.setRotation(q);
+        // map2markermap.setOrigin(tf::Vector3(-1.560919, 0.856247, 0.0));
+        // tf::Quaternion q(0.000000, 0.000000, 0.708229, 0.705983);
+        // map2markermap.setRotation(q);
         ros::Time transform_expiration = ros::Time::now() + transform_tolerance_;
         br_.sendTransform(tf::StampedTransform(map2markermap, transform_expiration, "map", "datmo_lidar"));
         rate.sleep();
