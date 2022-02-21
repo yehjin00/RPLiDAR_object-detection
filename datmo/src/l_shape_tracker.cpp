@@ -280,7 +280,7 @@ void LshapeTracker::detectCornerPointSwitchMahalanobis(const double& from, const
   findOrientation(psi, length, width);
 }
 
-void LshapeTracker::Robot_BoxModel(double& x, double& y,double& vx, double& vy,double& theta, double& psi, double& omega, double& L1, double& L2, double& length, double& width, double& cosd){
+void LshapeTracker::Robot_BoxModel(double& x, double& y,double& vx, double& vy, double& theta, double& psi, double& omega, double& L1, double& L2, double& length, double& width, double& cosd){
   L1 = 0.495;
   L2 = 0.48;
   theta = shape_kf.state()(2);
@@ -298,22 +298,33 @@ void LshapeTracker::Robot_BoxModel(double& x, double& y,double& vx, double& vy,d
   vx = dynamic_kf.state()(2);
   vy = dynamic_kf.state()(3);
 
+  //old_x=0;
+  std::cout << "old_x : " << old_x << "\n";
+  //std::ofstream writeFile;            //쓸 목적의 파일 선언
+  //writeFile.open("/home/robot/catkin_ws/src/RPLiDAR_object-detection/datmo/src/words.txt");
   if(old_x){
-    cosd = 1-(x*old_x+y*old_y)/(sqrt(pow(x,2)+pow(y,2))*sqrt(pow(old_x,2)+pow(old_y,2)))>0.0001;
+    cosd = 1-(x*old_x+y*old_y)/(sqrt(pow(x,2)+pow(y,2))*sqrt(pow(old_x,2)+pow(old_y,2)))>0.00001;
     value = 1-(x*old_x+y*old_y)/(sqrt(pow(x,2)+pow(y,2))*sqrt(pow(old_x,2)+pow(old_y,2)));
     std::cout << "(" << x << ", " << y << ")" << "(" << old_x << ", " << old_y << ")" << "\n";
+    std::cout << "cosd : " << cosd << "\n";
     std::cout << "cosd vlaue : " << value << "\n";
 
-  }
+    // if(writeFile.is_open()){
+    // std::cout << "open : " << "1" << "\n";
+    // std::string word = std::to_string(old_x);
+    // }
+    // writeFile.write(word.c_str(),word.size());    //파일에 문자열 쓰기
+    }
   
   old_x,old_y=center_update(x,y);
-  
-  Robot_findOrientation(psi, length, width);
+  //writeFile.close();    //파일 닫기
+
+  Robot_findOrientation(psi, length, width, go);
 }
 
 double LshapeTracker::center_update(double& x, double& y){
-  old_x = x;
-  old_y = y;
+  old_x=x;
+  old_y=y;
   return old_x,old_y;
 }
 
@@ -378,7 +389,7 @@ void LshapeTracker::findOrientation(double& psi, double& length, double& width){
   
 }
 
-void LshapeTracker::Robot_findOrientation(double& psi, double& length, double& width){
+void LshapeTracker::Robot_findOrientation(double& psi, double& length, double& width, double& go){
   //This function finds the orientation of a moving object, when given an L-shape orientation
 
   std::vector<double> angles;
@@ -399,7 +410,7 @@ void LshapeTracker::Robot_findOrientation(double& psi, double& length, double& w
     if (distance < min){ 
       min = distance;
       orientation = normalize_angle(angles[i]);
-      //go=abs(normalize_angle(angles[i+1])-normalize_angle(angles[i])) < 1.6; // if it is small, it's mean the robot's direction is same with past.
+      go=abs(normalize_angle(angles[i+1])-normalize_angle(angles[i]));// < 1.5; // if it is small, it's mean the robot's direction is same with past.
       pos = i;
     }
   } 

@@ -35,6 +35,9 @@
 #include <Eigen/Dense>
 #include <ros/console.h>
 #include<cmath>
+#include<iostream>
+#include<fstream>
+#include<string>
 
 using namespace Eigen;
 
@@ -57,7 +60,8 @@ private:
   int current_size;
   double test1, test2, test3;
   double x_old, y_old, L1_old, L2_old, old_thetaL1;
-  double old_x, old_y, cosd, value;
+  double old_y, cosd, value, go;
+  double old_x=0;
   
 
   KalmanFilter shape_kf;
@@ -80,5 +84,5 @@ private:
    * \orientation orientation of tracked object, based on it's speed
    */
   void findOrientation(double& psi, double& length, double& width);
-  void Robot_findOrientation(double& psi, double& length, double& width);
+  void Robot_findOrientation(double& psi, double& length, double& width, double& go);
 };

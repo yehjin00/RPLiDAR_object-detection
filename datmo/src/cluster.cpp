@@ -435,7 +435,7 @@ visualization_msgs::Marker Cluster::getThetaBoxVisualisationMessage() {
   arrow_marker.pose.position.y = cy;
   arrow_marker.pose.position.z = 0;
 
-  if (robot && cosd){
+  if (robot && go){
   arrow_marker.scale.x         = length_box;
   arrow_marker.scale.y         = width_box;
   arrow_marker.scale.z         = 0.01;
@@ -583,7 +583,7 @@ visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
   p.y = scale_msg.pose.position.y;
     
   if (robot){
-  std::string scale_string = "L1:" + std::to_string(L1_box).substr(0, 4) + "\nL2:" + std::to_string(L2_box).substr(0, 4) + "\n" + std::to_string(cosd);
+  std::string scale_string = "L1:" + std::to_string(L1_box).substr(0, 4) + "\nL2:" + std::to_string(L2_box).substr(0, 4) + "\n" + std::to_string(go);
   
   scale_msg.points.push_back(p);
   scale_msg.text = scale_string;}

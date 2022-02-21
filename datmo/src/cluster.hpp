@@ -94,7 +94,7 @@ public:
   double L1, L2, thetaL1, thetaL2;
   double cx, cy, cvx, cvy, L1_box, L2_box, th, psi, comega, length_box, width_box, cosd; 
   double x_ukf,  y_ukf, vx_ukf,  vy_ukf, omega_ukf;
-  double robot;
+  double robot, go;
   
 
 private:
