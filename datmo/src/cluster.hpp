@@ -120,5 +120,5 @@ private:
   Point lineIntersection(double& , double& , double& , double& , double& , double& );
   double perpendicularDistance(const Point&, const Point&, const Point&);
   void ramerDouglasPeucker(const std::vector<Point>&, double, std::vector<Point>&);
-  bool robot_predict(double&, double& );
+  bool robotPredict(double&, double& );
 };

@@ -1,6 +1,6 @@
  <launch>
-  <arg name="map_file" default="$(find datmo)/images/220123_3rd.yaml"/>
-  <arg name="place" default="ele"/>
+  <arg name="map_file" default="$(find datmo)/images/220227_3rdtest.yaml"/>
+  <arg name="place" default="lab"/>
 
   <include file="$(find rplidar_ros)/launch/rplidar_s1.launch" />
 

@@ -14,7 +14,8 @@ int main(int argc, char *argv[])
     tf::TransformBroadcaster br_;
     ros::Duration transform_tolerance_;
     transform_tolerance_.fromSec(0.5);
-    double lab[4] = {-2.566507, -2.798608, -0.935929, 0.352190};
+    //double lab[4] = {-2.566507, -2.798608, -0.935929, 0.352190};
+    double lab[4] = {-9.499211, -5.231932, -0.999936, -0.011332};
     double ele[4] = {2.960992, -1.661443, -0.358322, 0.933598};
     ros::Rate rate(20.0);
     while (nh.ok()) {

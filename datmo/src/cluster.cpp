@@ -78,11 +78,10 @@ Cluster::Cluster(unsigned long int id, const pointList& new_points, const double
   this->Lshape = l_shape_tracker_ukf;
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
   
-  robot=robot_predict(L1_box, L2_box);
+  robot=robotPredict(L1_box, L2_box);
   if (robot){
-    Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box, cosd);
+    Lshape.robotBoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box, cosd);
   }
-  //std::cout << "go??: " << cosd <<"\n";
   
   populateTrackingMsgs(dt);
 }
@@ -104,7 +103,7 @@ void Cluster::update(const pointList& new_points, const double dt, const tf::Tra
   Lshape.BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box);
 
   if (robot){
-    Lshape.Robot_BoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box, cosd);
+    Lshape.robotBoxModel(cx, cy, cvx, cvy, th, psi, comega, L1_box, L2_box, length_box, width_box, cosd);
   }
 
   populateTrackingMsgs(dt);
@@ -435,7 +434,7 @@ visualization_msgs::Marker Cluster::getThetaBoxVisualisationMessage() {
   arrow_marker.pose.position.y = cy;
   arrow_marker.pose.position.z = 0;
 
-  if (robot && go){
+  if (robot && (cosd>=1)){
   arrow_marker.scale.x         = length_box;
   arrow_marker.scale.y         = width_box;
   arrow_marker.scale.z         = 0.01;
@@ -583,7 +582,7 @@ visualization_msgs::Marker Cluster::getBoxScaleVisualisationMessage() {
   p.y = scale_msg.pose.position.y;
     
   if (robot){
-  std::string scale_string = "L1:" + std::to_string(L1_box).substr(0, 4) + "\nL2:" + std::to_string(L2_box).substr(0, 4) + "\n" + std::to_string(go);
+  std::string scale_string = "L1:" + std::to_string(L1_box).substr(0, 4) + "\nL2:" + std::to_string(L2_box).substr(0, 4);// + "\n" + std::to_string(go);
   
   scale_msg.points.push_back(p);
   scale_msg.text = scale_string;}
@@ -841,7 +840,7 @@ void Cluster::ramerDouglasPeucker(const std::vector<Point> &pointList, double ep
   }
 }
 
-bool Cluster::robot_predict(double& length, double& width){
+bool Cluster::robotPredict(double& length, double& width){
   return (length>0.42 && length<0.5) || (width>0.42 && width<0.5);
 }
 
