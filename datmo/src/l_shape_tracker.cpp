@@ -390,7 +390,7 @@ void LshapeTracker::robotFindOrientation(double& psi, double& length, double& wi
     if (distance < min){ 
       min = distance;
       orientation = normalize_angle(angles[i]);
-      //go=(abs(normalize_angle(angles[i+1])-normalize_angle(angles[i])) > 1.5) && (abs(normalize_angle(angles[i+1])-normalize_angle(angles[i])) < 1.6); // if it is small, it's mean the robot's direction is same with past.
+      //cosd=abs(normalize_angle(angles[i+1])-normalize_angle(angles[i]))<1.7;// < 1.6);// && (abs(normalize_angle(angles[i+1])-normalize_angle(angles[i])) > 1.5); // if it is small, it's mean the robot's direction is same with past.
       x_vec << cos(normalize_angle(angles[i])), sin(normalize_angle(angles[i]));
       y_vec << cos(normalize_angle(angles[i+1])), sin(normalize_angle(angles[i+1]));
       cosd = 1-(x_vec(0)*x_vec(1)+y_vec(0)*y_vec(1))/(sqrt(pow(x_vec(0),2)+pow(x_vec(1),2))*sqrt(pow(y_vec(0),2)+pow(y_vec(1),2)));

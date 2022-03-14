@@ -57,9 +57,9 @@ static inline double shortest_angular_distance(double from, double to){
 Cluster::Cluster(unsigned long int id, const pointList& new_points, const double& dt, const std::string& world_frame, const tf::Transform& ego_pose){
 
   this->id = id;
-  this->r = rand() / double(RAND_MAX);
-  this->g = rand() / double(RAND_MAX);
-  this->b = rand() / double(RAND_MAX);
+  this->r = 0;//rand() / double(RAND_MAX);
+  this->g = 0;//rand() / double(RAND_MAX);
+  this->b = 255;//rand() / double(RAND_MAX);
   a = 1.0;
   age = 1;
   frame_name = world_frame;
@@ -434,7 +434,7 @@ visualization_msgs::Marker Cluster::getThetaBoxVisualisationMessage() {
   arrow_marker.pose.position.y = cy;
   arrow_marker.pose.position.z = 0;
 
-  if (robot && (cosd>=1)){
+  if (robot && (cosd>1.1)){
   arrow_marker.scale.x         = length_box;
   arrow_marker.scale.y         = width_box;
   arrow_marker.scale.z         = 0.01;

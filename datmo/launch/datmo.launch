@@ -1,5 +1,5 @@
  <launch>
-  <arg name="map_file" default="$(find datmo)/images/220227_3rdtest.yaml"/>
+  <arg name="map_file" default="$(find datmo)/images/map_file_yjlink.yaml"/>
   <arg name="place" default="lab"/>
 
   <include file="$(find rplidar_ros)/launch/rplidar_s1.launch" />
