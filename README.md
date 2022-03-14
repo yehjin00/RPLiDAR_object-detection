@@ -1,2 +1,2 @@
 # RPLiDAR_object-detection
-https://github.com/kostaskonkk/datmo/raw/master/images/output.gif
+![Example experiment](https://github.com/kostaskonkk/datmo/raw/master/images/output.gif)
